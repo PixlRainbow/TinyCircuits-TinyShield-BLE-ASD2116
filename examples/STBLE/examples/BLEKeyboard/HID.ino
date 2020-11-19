@@ -58,7 +58,13 @@ uint8_t Add_HID_Service(void)
    */
   serviceMaxAttributeRecord = 1
                             + 2
-                            + 4;
+                            + 4
+                            + 3
+                            + 3
+                            + 2
+                            /* TODO: ext report reference descriptor, boot keyboard reports, etc*/
+                            + 2
+                            + 2;
   
   // COPY_HID_SERVICE_UUID(uuid);
   /* Add HID Services */
@@ -124,8 +130,6 @@ uint8_t Add_HID_Service(void)
   ret = aci_gatt_update_char_value(HIDServHandle, ReportMapCharHandle, 0, sizeof(KEYBOARD_REPORT_MAP), KEYBOARD_REPORT_MAP);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
-  return BLE_STATUS_SUCCESS;
-
   /* Add HID Information Characteristic */
   ret = aci_gatt_add_char(HIDServHandle, UUID_TYPE_16, info_uuid, sizeof(HID_information_t),
                            (CHAR_PROP_READ), ATTR_PERMISSION_NONE, GATT_DONT_NOTIFY_EVENTS,
@@ -136,13 +140,13 @@ uint8_t Add_HID_Service(void)
   ret = aci_gatt_update_char_value(HIDServHandle, HIDInfoCharHandle, 0, sizeof(HID_information_t), &info);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
-  return BLE_STATUS_SUCCESS;
-
   /* Add HID Control Point Characteristic */
   ret = aci_gatt_add_char(HIDServHandle, UUID_TYPE_16, control_point_uuid, 1,
                            (CHAR_PROP_WRITE_WITHOUT_RESP), ATTR_PERMISSION_NONE, GATT_NOTIFY_ATTRIBUTE_WRITE,
                            10, CHAR_VALUE_LEN_CONSTANT, &HIDCtrlPtCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  return BLE_STATUS_SUCCESS;
 
   fail:
     PRINTF("Error while adding HID service.\n");
