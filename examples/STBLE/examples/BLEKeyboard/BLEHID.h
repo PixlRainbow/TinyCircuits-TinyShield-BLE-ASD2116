@@ -1,4 +1,5 @@
 #include "USBHID_Types.h"
+#include "Keyboard_types.h"
 #define HID_SERVICE_UUID          { 0x12, 0x18 }
 #define HID_INFO_CHAR_UUID        { 0x4A, 0x2A }
 #define HID_REPORT_MAP_CHAR_UUID  { 0x4B, 0x2A }

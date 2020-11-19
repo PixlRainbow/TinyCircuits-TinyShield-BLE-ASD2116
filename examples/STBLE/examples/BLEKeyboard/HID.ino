@@ -168,3 +168,42 @@ uint8_t Add_HID_Service(void)
     PRINTF("Error code %d\n", errcode);
     return BLE_STATUS_ERROR ;
 }
+
+tBleStatus sendKeyUpdate(bool clr=false)
+{
+  return aci_gatt_update_char_value(HIDServHandle, InReportCharHandle, 0,
+    sizeof(inputReportData), clr ? emptyInputReportData : inputReportData);
+}
+
+uint8_t pressKey(char c)
+{
+  tBleStatus ret;
+  int attempt = 0;
+
+  // Key down
+  inputReportData[0] = keymap[c].modifier;
+  inputReportData[2] = keymap[c].usage;
+  ret = sendKeyUpdate();
+
+  if (ret != BLE_STATUS_SUCCESS) {
+    PRINTF("Couldn't send key down event.\n") ;
+    return BLE_STATUS_ERROR ;
+  }
+  delay(256);
+
+  // Key up
+  ret = sendKeyUpdate(true);
+
+  while (ret != BLE_STATUS_SUCCESS && attempt <= 3) {
+    PRINTF("Couldn't send key up event, retrying attempt %d of 3\n", ++attempt) ;
+    delay(10);
+    ret = sendKeyUpdate(true);
+  }
+  if (ret != BLE_STATUS_SUCCESS) {
+    PRINTF("Aborted\n");
+    return BLE_STATUS_ERROR ;
+  }
+  delay(64);
+
+  return BLE_STATUS_SUCCESS;
+}

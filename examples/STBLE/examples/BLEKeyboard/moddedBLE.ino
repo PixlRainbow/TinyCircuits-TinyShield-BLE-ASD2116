@@ -54,6 +54,7 @@ void loop() {
     delay(10);//should catch input
     uint8_t sendBuffer[21];
     uint8_t sendLength = 0;
+    char keycode;
     while (SerialMonitorInterface.available() && sendLength < 19) {
       sendBuffer[sendLength] = SerialMonitorInterface.read();
       sendLength++;
@@ -66,6 +67,8 @@ void loop() {
     }
     sendBuffer[sendLength] = '\0'; //Terminate string
     sendLength++;
+    keycode = sendBuffer[0];
+    pressKey(keycode);
     if (!lib_aci_send_data(PIPE_UART_OVER_BTLE_UART_TX_TX, (uint8_t*)sendBuffer, sendLength))
     {
       SerialMonitorInterface.println(F("TX dropped!"));
