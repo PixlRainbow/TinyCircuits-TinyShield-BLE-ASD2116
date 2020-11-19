@@ -78,6 +78,16 @@ int BLEsetup() {
 
   /* +4 dBm output power */
   ret = aci_hal_set_tx_power_level(1, 3);
+  /* Configure security - Required by Android */
+  ret = aci_gap_set_auth_requirement(MITM_PROTECTION_REQUIRED,
+                                     OOB_AUTH_DATA_ABSENT,
+                                     NULL,
+                                     MIN_ENCRY_KEY_SIZE,
+                                     MAX_ENCRY_KEY_SIZE,
+                                     USE_FIXED_PIN_FOR_PAIRING,
+                                     123456,
+                                     BONDING);
+  if(ret != BLE_STATUS_SUCCESS) PRINTF("Error configuring connection security.\n");
 }
 
 void aci_loop() {
