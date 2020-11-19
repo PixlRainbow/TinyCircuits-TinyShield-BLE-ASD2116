@@ -35,6 +35,7 @@ uint8_t Add_HID_Service(void)
   const report_reference_t outputDesc = { 0x00, OUTPUT_REPORT };
   const report_reference_t featureDesc= { 0x00, FEATURE_REPORT };
   const static HID_information_t info = { HID_VERSION_1_11, 0x00, 0x03 };
+  unsigned int errcode = 0;
   
   uint8_t serviceMaxAttributeRecord = 0;
   const ProtocolMode mode = REPORT_PROTOCOL;
@@ -70,22 +71,26 @@ uint8_t Add_HID_Service(void)
   /* Add HID Services */
   ret = aci_gatt_add_serv(UUID_TYPE_16, uuid, PRIMARY_SERVICE, serviceMaxAttributeRecord, &HIDServHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
+  else errcode=1;
 
   /* Add from Protocol mode characteristic */
   ret = aci_gatt_add_char(HIDServHandle, UUID_TYPE_16, protocol_mode_uuid, 1,
                            (CHAR_PROP_READ | CHAR_PROP_WRITE_WITHOUT_RESP), ATTR_PERMISSION_NONE, GATT_NOTIFY_ATTRIBUTE_WRITE,
                            10, CHAR_VALUE_LEN_CONSTANT, &ProtoModeCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
+  else errcode=2;
 
   /* Set value for Protocol mode characteristic */
   ret = aci_gatt_update_char_value(HIDServHandle, ProtoModeCharHandle, 0, 1, &mode);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
+  else errcode=3;
 
   /* Add Input Report Characteristic */
   ret = aci_gatt_add_char(HIDServHandle, UUID_TYPE_16, report_uuid, sizeof(inputReportData),
                            (CHAR_PROP_READ | CHAR_PROP_WRITE | CHAR_PROP_NOTIFY), ATTR_PERMISSION_NONE, GATT_NOTIFY_ATTRIBUTE_WRITE,
                            10, CHAR_VALUE_LEN_VARIABLE, &InReportCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
+  else errcode=4;
 
   /* Add Input Report Descriptor */
   ret = aci_gatt_add_char_desc(HIDServHandle, InReportCharHandle, UUID_TYPE_16, report_desc_uuid,
@@ -93,12 +98,14 @@ uint8_t Add_HID_Service(void)
                               ATTR_PERMISSION_NONE, ATTR_ACCESS_READ_ONLY, GATT_DONT_NOTIFY_EVENTS,
                               10, CHAR_VALUE_LEN_CONSTANT, &InReportDescHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
+  else errcode=5;
 
   /* Add Output Report Characteristic */
   ret = aci_gatt_add_char(HIDServHandle, UUID_TYPE_16, report_uuid, sizeof(outputReportData),
                            (CHAR_PROP_READ | CHAR_PROP_WRITE | CHAR_PROP_WRITE_WITHOUT_RESP), ATTR_PERMISSION_NONE, GATT_NOTIFY_ATTRIBUTE_WRITE,
                            10, CHAR_VALUE_LEN_VARIABLE, &OutReportCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
+  else errcode=6;
 
   /* Add Output Report Descriptor */
   ret = aci_gatt_add_char_desc(HIDServHandle, OutReportCharHandle, UUID_TYPE_16, report_desc_uuid,
@@ -106,12 +113,14 @@ uint8_t Add_HID_Service(void)
                               ATTR_PERMISSION_NONE, ATTR_ACCESS_READ_ONLY, GATT_DONT_NOTIFY_EVENTS,
                               10, CHAR_VALUE_LEN_CONSTANT, &OutReportDescHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
+  else errcode=7;
 
   /* Add Feature Report Characteristic */
   ret = aci_gatt_add_char(HIDServHandle, UUID_TYPE_16, report_uuid, 0,
                            (CHAR_PROP_READ | CHAR_PROP_WRITE), ATTR_PERMISSION_NONE, GATT_NOTIFY_ATTRIBUTE_WRITE,
                            10, CHAR_VALUE_LEN_VARIABLE, &FeatReportCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
+  else errcode=8;
 
   /* Add Feature Report Descriptor */
   ret = aci_gatt_add_char_desc(HIDServHandle, FeatReportCharHandle, UUID_TYPE_16, report_desc_uuid,
@@ -119,36 +128,43 @@ uint8_t Add_HID_Service(void)
                               ATTR_PERMISSION_NONE, ATTR_ACCESS_READ_ONLY, GATT_DONT_NOTIFY_EVENTS,
                               10, CHAR_VALUE_LEN_CONSTANT, &FeatReportDescHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
+  else errcode=9;
 
   /* Add Report Map Characteristic */
   ret = aci_gatt_add_char(HIDServHandle, UUID_TYPE_16, report_map_uuid, sizeof(KEYBOARD_REPORT_MAP),
                            (CHAR_PROP_READ), ATTR_PERMISSION_NONE, GATT_DONT_NOTIFY_EVENTS,
                            10, CHAR_VALUE_LEN_VARIABLE, &ReportMapCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
+  else errcode=10;
 
   /* Set value for Report Map characteristic */
   ret = aci_gatt_update_char_value(HIDServHandle, ReportMapCharHandle, 0, sizeof(KEYBOARD_REPORT_MAP), KEYBOARD_REPORT_MAP);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
+  else errcode=11;
 
   /* Add HID Information Characteristic */
   ret = aci_gatt_add_char(HIDServHandle, UUID_TYPE_16, info_uuid, sizeof(HID_information_t),
                            (CHAR_PROP_READ), ATTR_PERMISSION_NONE, GATT_DONT_NOTIFY_EVENTS,
                            10, CHAR_VALUE_LEN_VARIABLE, &HIDInfoCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
+  else errcode=12;
 
   /* Set value for HID Information characteristic */
   ret = aci_gatt_update_char_value(HIDServHandle, HIDInfoCharHandle, 0, sizeof(HID_information_t), &info);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
+  else errcode=13;
 
   /* Add HID Control Point Characteristic */
   ret = aci_gatt_add_char(HIDServHandle, UUID_TYPE_16, control_point_uuid, 1,
                            (CHAR_PROP_WRITE_WITHOUT_RESP), ATTR_PERMISSION_NONE, GATT_NOTIFY_ATTRIBUTE_WRITE,
                            10, CHAR_VALUE_LEN_CONSTANT, &HIDCtrlPtCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
+  else errcode=14;
 
   return BLE_STATUS_SUCCESS;
 
   fail:
     PRINTF("Error while adding HID service.\n");
+    PRINTF("Error code %d\n", errcode);
     return BLE_STATUS_ERROR ;
 }
