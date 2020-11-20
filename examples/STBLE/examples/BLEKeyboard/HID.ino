@@ -189,7 +189,7 @@ uint8_t pressKey(char c)
     PRINTF("Couldn't send key down event.\n") ;
     return BLE_STATUS_ERROR ;
   }
-  delay(256);
+  delay(32);
 
   // Key up
   ret = sendKeyUpdate(true);
@@ -203,7 +203,7 @@ uint8_t pressKey(char c)
     PRINTF("Aborted\n");
     return BLE_STATUS_ERROR ;
   }
-  delay(64);
+  delay(24);
 
   return BLE_STATUS_SUCCESS;
 }
