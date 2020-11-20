@@ -50,7 +50,7 @@ int BLEsetup() {
     PRINTF("GAP_Init failed.\n");
   }
 
-  const char *name = "BlueNRG";
+  const char *name = "BlueKB";
 
   ret = aci_gatt_update_char_value(service_handle, dev_name_char_handle, 0, strlen(name), (uint8_t *)name);
 
@@ -185,7 +185,7 @@ void setConnectable(void)
 {
   tBleStatus ret;
 
-  const char local_name[] = {AD_TYPE_COMPLETE_LOCAL_NAME, 'B', 'l', 'u', 'e', 'N', 'R', 'G'};
+  const char local_name[] = {AD_TYPE_COMPLETE_LOCAL_NAME, 'B', 'l', 'u', 'e', 'K', 'B'};
 
   hci_le_set_scan_resp_data(0, NULL);
   PRINTF("General Discoverable Mode.\n");
