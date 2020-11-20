@@ -95,10 +95,24 @@ void aci_loop() {
   ble_connection_state = connected;
   if (set_connectable) {
     setConnectable();
+    print_bonded_devices();
     set_connectable = 0;
   }
   if (HCI_Queue_Empty()) {
     //Enter_LP_Sleep_Mode();
+  }
+}
+
+void print_bonded_devices()
+{
+  tBleStatus ret;
+  uint8_t num_devices = 0, device_list[12*7];
+  ret = aci_gap_get_bonded_devices(&num_devices, device_list, sizeof(device_list));
+  PRINTF("List Bonded Devices:\n");
+  for(int i = 0; i < num_devices * 7; i+=7){
+    uint8_t addr_type = device_list[i];
+    uint8_t *addr = &device_list[i+1];
+    PRINTF("Type: %d, Addr: %02X%02X%02X%02X%02X%02X\n",addr_type,addr[5],addr[4],addr[3],addr[2],addr[1],addr[0]);
   }
 }
 
