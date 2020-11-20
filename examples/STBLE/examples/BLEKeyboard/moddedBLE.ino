@@ -39,6 +39,7 @@ void setup() {
   SerialMonitorInterface.begin(9600);
   while (!SerialMonitorInterface); //This line will block until a serial monitor is opened with TinyScreen+!
   BLEsetup();
+  //aci_gap_clear_security_database();
 }
 
 
