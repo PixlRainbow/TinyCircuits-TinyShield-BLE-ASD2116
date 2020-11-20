@@ -67,11 +67,19 @@ void loop() {
     }
     sendBuffer[sendLength] = '\0'; //Terminate string
     sendLength++;
-    keycode = sendBuffer[0];
-    pressKey(keycode);
-    if (!lib_aci_send_data(PIPE_UART_OVER_BTLE_UART_TX_TX, (uint8_t*)sendBuffer, sendLength))
-    {
-      SerialMonitorInterface.println(F("TX dropped!"));
+//    keycode = sendBuffer[0];
+//    pressKey(keycode);
+    if(ble_connection_state){
+      for (int i = 0; i < sendLength; i++){
+        if(pressKey(sendBuffer[i]) == BLE_STATUS_ERROR){
+          SerialMonitorInterface.print(F("Entry was aborted\n"));
+          break;
+        }
+      }
     }
+//    if (!lib_aci_send_data(PIPE_UART_OVER_BTLE_UART_TX_TX, (uint8_t*)sendBuffer, sendLength))
+//    {
+//      SerialMonitorInterface.println(F("TX dropped!"));
+//    }
   }
 }
