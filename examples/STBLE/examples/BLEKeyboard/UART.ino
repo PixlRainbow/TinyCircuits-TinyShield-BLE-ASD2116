@@ -79,12 +79,14 @@ int BLEsetup() {
   /* +4 dBm output power */
   ret = aci_hal_set_tx_power_level(1, 3);
   /* Configure security - Required by Android */
+  ret = aci_gap_set_io_capability(IO_CAP_DISPLAY_ONLY);
+  if(ret != BLE_STATUS_SUCCESS) PRINTF("Error configuring connection security.\n");
   ret = aci_gap_set_auth_requirement(MITM_PROTECTION_REQUIRED,
                                      OOB_AUTH_DATA_ABSENT,
                                      NULL,
                                      MIN_ENCRY_KEY_SIZE,
                                      MAX_ENCRY_KEY_SIZE,
-                                     USE_FIXED_PIN_FOR_PAIRING,
+                                     DONOT_USE_FIXED_PIN_FOR_PAIRING,
                                      123456,
                                      BONDING);
   if(ret != BLE_STATUS_SUCCESS) PRINTF("Error configuring connection security.\n");
@@ -306,6 +308,14 @@ void HCI_Event_CB(void *pckt)
               Attribute_Modified_CB(evt->attr_handle, evt->data_length, evt->att_data);
             }
             break;
+          case EVT_BLUE_GAP_PASS_KEY_REQUEST:
+            {
+              evt_gap_pass_key_req *pkr = (evt_gap_pass_key_req *)blue_evt->data;
+              // generate pseudo random integer, 0-999999 (max 6 digits for PIN)
+              long rand_n = random(999999);
+              PRINTF("Generated PIN: %d\n", rand_n);
+              PRINTF("Return: 0x%02X\n",aci_gap_pass_key_response(pkr->conn_handle, rand_n));
+            }
         }
       }
       break;

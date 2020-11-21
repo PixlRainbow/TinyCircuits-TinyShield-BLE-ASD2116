@@ -40,6 +40,12 @@ void setup() {
   while (!SerialMonitorInterface); //This line will block until a serial monitor is opened with TinyScreen+!
   BLEsetup();
   //aci_gap_clear_security_database();
+  // initialize Pseudo RNG with seed from Hardware RNG
+  uint8_t rand_seq[8];
+  hci_le_rand(rand_seq);
+  uint16_t rand_xor = *(uint16_t *)&rand_seq[0] ^ *(uint16_t *)&rand_seq[2] ^
+                      *(uint16_t *)&rand_seq[4] ^ *(uint16_t *)&rand_seq[6];
+  randomSeed(rand_xor);
 }
 
 
