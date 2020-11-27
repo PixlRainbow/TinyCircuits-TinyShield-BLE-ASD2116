@@ -263,7 +263,8 @@ void HCI_Event_CB(void *pckt)
               // generate pseudo random integer, 0-999999 (max 6 digits for PIN)
               long rand_n = random(999999);
               PRINTF("Generated PIN: %d\n", rand_n);
-              PRINTF("Return: 0x%02X\n",aci_gap_pass_key_response(pkr->conn_handle, rand_n));
+              uint8_t retval = aci_gap_pass_key_response(pkr->conn_handle, rand_n);
+              PRINTF("Return: 0x%02X\n",retval);
             }
         }
       }
