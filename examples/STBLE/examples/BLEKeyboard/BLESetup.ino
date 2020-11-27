@@ -267,15 +267,20 @@ void HCI_Event_CB(void *pckt)
               // display PIN on screen
               char rand_txt[7];
               snprintf(rand_txt, sizeof(rand_txt), "%d", rand_n);
+              display.clearScreen();
               writeTextCustom(rand_txt, liberationSans_16ptFontInfo, 0xFF, 0xFF, TS_8b_Green, TS_8b_Black);
               // configure security subsystem with PIN
               PRINTF("Generated PIN: %d\n", rand_n);
               uint8_t retval = aci_gap_pass_key_response(pkr->conn_handle, rand_n);
               PRINTF("Return: 0x%02X\n",retval);
+              // lock brightness and disable buttons
+              display.setBrightness(10);
+              disable_buttons = true;
             }
             break;
           case EVT_BLUE_GAP_PAIRING_CMPLT:
             {
+              disable_buttons = false;
               writeText();
             }
             break;
