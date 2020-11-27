@@ -262,9 +262,20 @@ void HCI_Event_CB(void *pckt)
               evt_gap_pass_key_req *pkr = (evt_gap_pass_key_req *)blue_evt->data;
               // generate pseudo random integer, 0-999999 (max 6 digits for PIN)
               long rand_n = random(999999);
+              // display PIN on screen
+              char rand_txt[7];
+              snprintf(rand_txt, sizeof(rand_txt), "%d", rand_n);
+              writeTextCustom(rand_txt, liberationSans_16ptFontInfo, 0xFF, 0xFF, TS_8b_Green, TS_8b_Black);
+              // configure security subsystem with PIN
               PRINTF("Generated PIN: %d\n", rand_n);
               PRINTF("Return: 0x%02X\n",aci_gap_pass_key_response(pkr->conn_handle, rand_n));
             }
+            break;
+          case EVT_BLUE_GAP_PAIRING_CMPLT:
+            {
+              writeText();
+            }
+            break;
         }
       }
       break;
