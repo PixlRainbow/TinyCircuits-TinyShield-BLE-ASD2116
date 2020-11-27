@@ -196,6 +196,8 @@ void GAP_ConnectionComplete_CB(uint8_t addr[6], uint16_t handle) {
     PRINTF("%02X-", addr[i]);
   }
   PRINTF("%02X\r\n", addr[0]);
+
+  aci_gap_slave_security_request(connection_handle, BONDING, MITM_PROTECTION_REQUIRED);
 }
 
 void GAP_DisconnectionComplete_CB(void) {
