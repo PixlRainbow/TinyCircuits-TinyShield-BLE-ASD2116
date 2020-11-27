@@ -196,6 +196,8 @@ void GAP_ConnectionComplete_CB(uint8_t addr[6], uint16_t handle) {
     PRINTF("%02X-", addr[i]);
   }
   PRINTF("%02X\r\n", addr[0]);
+
+  aci_gap_slave_security_request(connection_handle, BONDING, MITM_PROTECTION_REQUIRED);
 }
 
 void GAP_DisconnectionComplete_CB(void) {
@@ -268,7 +270,8 @@ void HCI_Event_CB(void *pckt)
               writeTextCustom(rand_txt, liberationSans_16ptFontInfo, 0xFF, 0xFF, TS_8b_Green, TS_8b_Black);
               // configure security subsystem with PIN
               PRINTF("Generated PIN: %d\n", rand_n);
-              PRINTF("Return: 0x%02X\n",aci_gap_pass_key_response(pkr->conn_handle, rand_n));
+              uint8_t retval = aci_gap_pass_key_response(pkr->conn_handle, rand_n);
+              PRINTF("Return: 0x%02X\n",retval);
             }
             break;
           case EVT_BLUE_GAP_PAIRING_CMPLT:
