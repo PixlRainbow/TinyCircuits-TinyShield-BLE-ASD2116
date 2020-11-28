@@ -278,6 +278,7 @@ void HCI_Event_CB(void *pckt)
               disable_buttons = true;
             }
             break;
+          case EVT_BLUE_GAP_LIMITED_DISCOVERABLE:
           case EVT_BLUE_GAP_PAIRING_CMPLT:
             {
               disable_buttons = false;
