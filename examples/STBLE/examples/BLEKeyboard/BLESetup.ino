@@ -151,6 +151,7 @@ void setConnectable(void)
   tBleStatus ret;
 
   const char local_name[] = {AD_TYPE_COMPLETE_LOCAL_NAME, 'B', 'l', 'u', 'e', 'K', 'B'};
+  uint8_t serviceUUIDList[] = {AD_TYPE_16_BIT_SERV_UUID,0x12,0x18}; // HID service UUID
   uint8_t num_devices = 0, device_list[12*7];
 
   hci_le_set_scan_resp_data(0, NULL);
@@ -166,7 +167,7 @@ void setConnectable(void)
     ret = aci_gap_set_discoverable(ADV_IND,
                                    (ADV_INTERVAL_MIN_MS * 1000) / 625, (ADV_INTERVAL_MAX_MS * 1000) / 625,
                                    STATIC_RANDOM_ADDR, NO_WHITE_LIST_USE,
-                                   sizeof(local_name), local_name, 0, NULL, 0, 0);
+                                   sizeof(local_name), local_name, sizeof(serviceUUIDList), serviceUUIDList, 0, 0);
   }
 
   if (ret != BLE_STATUS_SUCCESS)
